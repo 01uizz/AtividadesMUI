@@ -2,15 +2,15 @@ import Swal from 'sweetalert2';
 
 function ExemploSweetAlert(){
 Swal.fire({
-  title: 'Você tem certeza?',
+  title: 'Você tem certeza, de que quer abrir este arquivo?',
   text: "Isso não pode ser revertido!",
   icon: 'warning',
   showCancelButton: true,
-  confirmButtonText: 'Sim, delete!',
+  confirmButtonText: 'Sim, abra!',
   cancelButtonText: 'Cancelar'
 }).then((result) => {
   if (result.isConfirmed) {
-    Swal.fire('Deletado!', 'Seu arquivo foi removido.', 'success');
+    Swal.fire('OK!', 'Arquivo Aberto.', 'success');
   }
 });
 }

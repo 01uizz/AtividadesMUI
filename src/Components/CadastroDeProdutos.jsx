@@ -1,4 +1,5 @@
 import React from 'react';
+import Swal from 'sweetalert2';
 import { 
   Container, 
   Typography, 
@@ -9,7 +10,6 @@ import {
   FormControl, 
   InputLabel, 
   Select, 
-  Box, 
   Divider,
   List, 
   ListItem, 
@@ -18,101 +18,115 @@ import {
   Grid
 } from '@mui/material';
 
-// Importações dos arquivos JSON internos
-import { categoriasDisponiveis } from '../Dados/data';
-import { produtosIniciais } from '../Dados/dadosproduto';
-
 function CadastrodeProdutos() {
-  // 1. ESTADOS (Memória)
-  const [nome, setNome] = React.useState("");
-  const [categoria, setCategoria] = React.useState("");
-  // Criamos uma lista na memória que começa com os dados do arquivo
-  const [listaProdutos, setListaProdutos] = React.useState(produtosIniciais);
 
-  // 2. FUNÇÕES DE MANIPULAÇÃO (Handlers)
+  const [nome, setNome] = React.useState("");
+  const [estado, setEstado] = React.useState("");
+  const [listaClientes, setListaClientes] = React.useState([]);
+
   function mudarNome(event) {
     setNome(event.target.value);
   }
 
-  function mudarCategoria(event) {
-    setCategoria(event.target.value);
+  function mudarEstado(event) {
+    setEstado(event.target.value);
   }
 
-  function adicionarProduto() {
-    // Criamos um novo objeto com os dados digitados
-    const novoItem = {
-      id: Math.random(), // Gera um ID temporário
-      nome: nome,
-      categoria: categoria
-    };
+  function cadastrarCliente() {
 
-    // Adicionamos o novo item à lista existente
-    // Usamos o padrão de "espalhar" os itens antigos e somar o novo
-    setListaProdutos([...listaProdutos, novoItem]);
+    Swal.fire({
+      title: "Tem certeza?",
+      text: "Deseja cadastrar esse cliente?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sim, cadastrar",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
 
-    // Limpamos os campos após salvar
-    setNome("");
-    setCategoria("");
+      if (result.isConfirmed) {
+
+        const novoCliente = {
+          id: Math.random(),
+          nome: nome,
+          estado: estado
+        };
+
+        setListaClientes([...listaClientes, novoCliente]);
+
+        setNome("");
+        setEstado("");
+
+        Swal.fire({
+          title: "Cadastrado!",
+          text: "Cliente cadastrado com sucesso.",
+          icon: "success"
+        });
+      }
+
+    });
   }
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
       <Grid container spacing={4}>
         
-        {/* COLUNA 1: FORMULÁRIO DE CADASTRO */}
         <Grid item xs={12} md={5}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>Cadastrar Novo</Typography>
+            <Typography variant="h6" gutterBottom>
+              Cadastrar <strong>CLIENTE</strong>
+            </Typography>
+
             <Stack spacing={2}>
               <TextField 
-                label="Nome do Produto" 
-                value={nome} 
-                onChange={mudarNome} 
-                fullWidth 
+                label="Nome do Cliente"
+                value={nome}
+                onChange={mudarNome}
+                fullWidth
               />
 
               <FormControl fullWidth>
-                <InputLabel>Categoria</InputLabel>
-                <Select value={categoria} onChange={mudarCategoria} label="Categoria">
-                  {categoriasDisponiveis.map(function (cat) {
-                    return (
-                      <MenuItem key={cat.id} value={cat.nome}>
-                        {cat.nome}
-                      </MenuItem>
-                    );
-                  })}
+                <InputLabel>Estado</InputLabel>
+                <Select 
+                  value={estado}
+                  onChange={mudarEstado}
+                  label="Estado"
+                >
+                  <MenuItem value="SP">São Paulo</MenuItem>
+                  <MenuItem value="RJ">Rio de Janeiro</MenuItem>
+                  <MenuItem value="MG">Minas Gerais</MenuItem>
+                  <MenuItem value="BA">Bahia</MenuItem>
                 </Select>
               </FormControl>
 
               <Button 
-                variant="contained" 
-                onClick={adicionarProduto}
-                disabled={nome === "" || categoria === ""}
+                variant="contained"
+                onClick={cadastrarCliente}
+                disabled={nome === "" || estado === ""}
               >
-                Adicionar à Lista
+                Cadastro
               </Button>
             </Stack>
           </Paper>
         </Grid>
 
-        {/* COLUNA 2: LISTA DE PRODUTOS CADASTRADOS */}
         <Grid item xs={12} md={7}>
-          <Typography variant="h6" gutterBottom>Produtos no Sistema</Typography>
+          <Typography variant="h6" gutterBottom>
+            Clientes cadastrados
+          </Typography>
+
           <Paper sx={{ maxHeight: 400, overflow: 'auto' }}>
             <List>
-              {listaProdutos.map(function (prod) {
-                return (
-                  <React.Fragment key={prod.id}>
-                    <ListItem>
-                      <ListItemText 
-                        primary={prod.nome} 
-                        secondary={"Categoria: " + prod.categoria} 
-                      />
-                    </ListItem>
-                    <Divider />
-                  </React.Fragment>
-                );
-              })}
+              {listaClientes.map((cliente) => (
+                <React.Fragment key={cliente.id}>
+                  <ListItem>
+                    <ListItemText 
+                      primary={cliente.nome}
+                      secondary={"Estado: " + cliente.estado}
+                    />
+                  </ListItem>
+                  <Divider />
+                </React.Fragment>
+              ))}
             </List>
           </Paper>
         </Grid>
